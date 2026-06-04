@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site vitrine réparateur - Exemple avec pages virtuelles</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700;800&family=Space+Grotesk:wght@400;500;600&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ---------- RESET & BASE ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.25s ease, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.5;
+            scroll-behavior: smooth;
+        }
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        section {
+            padding: 80px 0;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 28px;
+            font-weight: 600;
+            border-radius: 50px;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+        .section-sub {
+            font-size: 1.1rem;
+            max-width: 680px;
+            margin-bottom: 48px;
+            opacity: 0.8;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+            margin-top: 20px;
+        }
+        .service-card, .engagement-card {
+            padding: 32px 24px;
+            border-radius: 32px;
+            transition: transform 0.25s ease, box-shadow 0.3s;
+        }
+        .service-card:hover, .engagement-card:hover {
+            transform: translateY(-8px);
+        }
+        .service-card i, .engagement-card i {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        .price-table {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            justify-content: center;
+            margin: 40px 0 20px;
+        }
+        .price-item {
+            flex: 1;
+            min-width: 200px;
+            padding: 24px 20px;
+            border-radius: 28px;
+            text-align: center;
+            font-weight: 600;
+        }
+        .price-item span {
+            font-size: 1.8rem;
+            font-weight: 800;
+            display: block;
+            margin-top: 8px;
+        }
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        .contact-form input, .contact-form select, .contact-form textarea {
+            padding: 14px 20px;
+            border-radius: 48px;
+            border: 1px solid;
+            font-family: inherit;
+            font-size: 1rem;
+            background: transparent;
+            outline: none;
+        }
+        .contact-form textarea {
+            border-radius: 28px;
+            resize: vertical;
+        }
+        footer {
+            padding: 48px 0 32px;
+            text-align: center;
+            margin-top: 40px;
+        }
+        .footer-infos {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 24px;
+            align-items: center;
+        }
+        hr {
+            margin: 32px 0;
+            opacity: 0.3;
+        }
+        /* navbar & dropdown */
+        .navbar {
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+        }
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            cursor: pointer;
+        }
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .dropdown {
+            position: relative;
+        }
+        .dropbtn {
+            background: none;
+            border: none;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            min-width: 160px;
+            border-radius: 20px;
+            overflow: hidden;
+            backdrop-filter: blur(16px);
+            z-index: 101;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+        .dropdown-content a {
+            padding: 12px 20px;
+            text-decoration: none;
+            display: block;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        .hero {
+            text-align: center;
+            padding: 60px 0 40px;
+        }
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 24px auto;
+        }
+        .hero-badges {
+            display: flex;
+            justify-content: center;
+            gap: 28px;
+            margin: 24px 0 32px;
+            flex-wrap: wrap;
+        }
+        /* sélecteur de thèmes flottant */
+        .theme-switcher {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(12px);
+            padding: 12px 18px;
+            border-radius: 60px;
+            display: flex;
+            gap: 12px;
+            z-index: 1000;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        .theme-btn {
+            background: white;
+            border: none;
+            width: 46px;
+            height: 46px;
+            border-radius: 60px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .theme-btn.active {
+            transform: scale(1.08);
+            box-shadow: 0 0 0 3px gold;
+        }
+        /* Pages virtuelles : on affiche une seule page à la fois */
+        .page {
+            display: none;
+        }
+        .page.active-page {
+            display: block;
+        }
+        @media (max-width: 780px) {
+            .section-title { font-size: 2rem; }
+            .hero h1 { font-size: 2.2rem; }
+            .flex-between { flex-direction: column; text-align: center; }
+            .nav-links { justify-content: center; }
+            .footer-infos { flex-direction: column; }
+            .theme-btn { width: 40px; height: 40px; }
+        }
+        /* ----- THÈMES (identiques aux précédents) ----- */
+        body.theme-1 {
+            --primary: #0f2b3d;
+            --primary-light: #1c4e6f;
+            --accent: #0ea5e9;
+            --bg-body: #f4f9fe;
+            --surface: #ffffff;
+            --text-main: #0a1927;
+            --border-light: #cbdde9;
+            --card-shadow: 0 20px 35px -12px rgba(0, 32, 64, 0.12);
+            --btn-hover: #0284c7;
+            --footer-bg: #0f2b3d;
+            --dropdown-bg: rgba(255,255,255,0.95);
+        }
+        body.theme-1 {
+            background: var(--bg-body);
+            color: var(--text-main);
+        }
+        body.theme-1 .navbar {
+            background: rgba(255,255,255,0.85);
+            border-bottom: 1px solid var(--border-light);
+        }
+        body.theme-1 .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        body.theme-1 .btn-primary:hover {
+            background: var(--btn-hover);
+        }
+        body.theme-1 .service-card, body.theme-1 .engagement-card, body.theme-1 .price-item {
+            background: var(--surface);
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-light);
+        }
+        body.theme-1 .dropdown-content {
+            background: var(--dropdown-bg);
+            border: 1px solid var(--border-light);
+        }
+        body.theme-1 .dropdown-content a {
+            color: var(--text-main);
+        }
+        body.theme-1 footer {
+            background: var(--footer-bg);
+            color: #b9d0e3;
+        }
+        body.theme-2 {
+            --primary: #ff7b2c;
+            --bg-body: #0b0e14;
+            --surface: #161c27;
+            --text-main: #f0f3f8;
+            --border-light: #2a3346;
+            --card-shadow: 0 20px 30px -12px rgba(0,0,0,0.6);
+            --btn-hover: #ff944d;
+            --footer-bg: #05070c;
+            --dropdown-bg: #1e2533ee;
+        }
+        body.theme-2 {
+            background: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Space Grotesk', monospace;
+        }
+        body.theme-2 .navbar {
+            background: rgba(11,14,20,0.9);
+            border-bottom: 1px solid var(--border-light);
+        }
+        body.theme-2 .btn-primary {
+            background: var(--primary);
+            color: #0b0e14;
+            font-weight: 700;
+            box-shadow: 0 0 6px var(--primary);
+        }
+        body.theme-2 .btn-primary:hover {
+            background: var(--btn-hover);
+            box-shadow: 0 0 12px #ff9f5f;
+        }
+        body.theme-2 .service-card, body.theme-2 .engagement-card, body.theme-2 .price-item {
+            background: var(--surface);
+            border: 1px solid #2e3a4e;
+            box-shadow: 0 15px 25px rgba(0,0,0,0.5);
+        }
+        body.theme-2 .dropdown-content {
+            background: var(--dropdown-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid #ff7b2c30;
+        }
+        body.theme-2 .dropdown-content a:hover {
+            background: #ff7b2c;
+            color: #0b0e14;
+        }
+        body.theme-2 footer {
+            background: var(--footer-bg);
+            border-top: 1px solid #ff7b2c30;
+        }
+        body.theme-3 {
+            --primary: #2b6e4c;
+            --bg-body: #fefae6;
+            --surface: #ffffffdd;
+            --text-main: #1f3d2e;
+            --border-light: #cbe5cf;
+            --card-shadow: 0 18px 32px -12px rgba(60,80,40,0.12);
+            --btn-hover: #52b788;
+            --footer-bg: #d8e2cf;
+            --dropdown-bg: #fff9efe6;
+        }
+        body.theme-3 {
+            background: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Quicksand', sans-serif;
+        }
+        body.theme-3 .navbar {
+            background: #fef5e3ee;
+            border-bottom: 2px solid #d0e2bf;
+        }
+        body.theme-3 .btn-primary {
+            background: var(--primary);
+            color: white;
+            border-radius: 60px;
+        }
+        body.theme-3 .btn-primary:hover {
+            background: var(--btn-hover);
+            transform: translateY(-3px);
+        }
+        body.theme-3 .service-card, body.theme-3 .engagement-card {
+            background: var(--surface);
+            backdrop-filter: blur(4px);
+            border-radius: 48px;
+            border: 1px solid #e2f0e0;
+        }
+        body.theme-3 .price-item {
+            background: #ecf7e9;
+            border-radius: 48px;
+        }
+        body.theme-3 .dropdown-content {
+            background: var(--dropdown-bg);
+            border-radius: 32px;
+            border: 1px solid #cbe5cf;
+        }
+        body.theme-3 footer {
+            background: #e2edd9;
+            color: #2c553b;
+        }
+    </style>
+</head>
+<body class="theme-1">
+    <div class="theme-switcher">
+        <button class="theme-btn" data-theme="theme-1" title="Élégant">🎨</button>
+        <button class="theme-btn" data-theme="theme-2" title="Sombre">🌙</button>
+        <button class="theme-btn" data-theme="theme-3" title="Nature">🌿</button>
+    </div>
+
+    <div class="navbar">
+        <div class="container flex-between">
+            <div class="logo" id="homeLink"><i class="fas fa-tools"></i> Exemple<span>Pro</span></div>
+            <div class="nav-links">
+                <a class="nav-page" data-page="home">Accueil</a>
+                <a class="nav-page" data-page="services">Services</a>
+                <a class="nav-page" data-page="prices">Tarifs</a>
+                <a class="nav-page" data-page="engagements">Engagements</a>
+                <a class="nav-page" data-page="contact">Contact</a>
+                <div class="dropdown">
+                    <button class="dropbtn">Marques <i class="fas fa-chevron-down"></i></button>
+                    <div class="dropdown-content">
+                        <a class="brand-link" data-brand="brand1">Marque 1</a>
+                        <a class="brand-link" data-brand="brand2">Marque 2</a>
+                        <a class="brand-link" data-brand="brand3">Marque 3</a>
+                    </div>
+                </div>
+                <a href="#" class="btn-primary btn" id="demoBtn">Exemple</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE ACCUEIL (home) -->
+    <div id="page-home" class="page active-page">
+        <section id="accueil">
+            <div class="container hero">
+                <h1>Titre d'exemple <span style="color: var(--primary);">vitrine</span></h1>
+                <p>Ceci est un texte générique de démonstration. Aucun contenu réel.</p>
+                <div class="hero-badges">
+                    <span><i class="fas fa-check-circle"></i> Exemple 1</span>
+                    <span><i class="fas fa-clock"></i> Exemple 2</span>
+                    <span><i class="fas fa-shield-alt"></i> Exemple 3</span>
+                </div>
+                <a class="btn-primary btn nav-page" data-page="contact">Bouton exemple</a>
+                <a class="nav-page" data-page="services" style="margin-left: 16px;">En savoir plus →</a>
+            </div>
+        </section>
+
+        <section id="services">
+            <div class="container">
+                <div style="text-align: center;">
+                    <div class="section-title">Nos services (exemples)</div>
+                    <div class="section-sub">Contenu générique.</div>
+                </div>
+                <div class="grid-3">
+                    <div class="service-card"><i class="fas fa-mobile-alt"></i><h3>Service 1</h3><p>Exemple de texte.</p><strong>---</strong></div>
+                    <div class="service-card"><i class="fas fa-battery-full"></i><h3>Service 2</h3><p>Exemple de texte.</p><strong>---</strong></div>
+                    <div class="service-card"><i class="fas fa-water"></i><h3>Service 3</h3><p>Exemple de texte.</p><strong>---</strong></div>
+                    <div class="service-card"><i class="fas fa-microphone-alt"></i><h3>Service 4</h3><p>Exemple de texte.</p><strong>---</strong></div>
+                    <div class="service-card"><i class="fas fa-lock"></i><h3>Service 5</h3><p>Exemple de texte.</p><strong>---</strong></div>
+                    <div class="service-card"><i class="fas fa-camera"></i><h3>Service 6</h3><p>Exemple de texte.</p><strong>---</strong></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="prices">
+            <div class="container">
+                <div style="text-align: center;">
+                    <div class="section-title">Exemples de grille</div>
+                    <div class="section-sub">Aucun tarif réel.</div>
+                </div>
+                <div class="price-table">
+                    <div class="price-item"><i class="fas fa-mobile"></i> Élément 1 <span>---</span></div>
+                    <div class="price-item"><i class="fas fa-mobile"></i> Élément 2 <span>---</span></div>
+                    <div class="price-item"><i class="fas fa-charging-station"></i> Élément 3 <span>---</span></div>
+                    <div class="price-item"><i class="fas fa-microchip"></i> Élément 4 <span>---</span></div>
+                </div>
+                <p style="text-align: center;">Texte générique.</p>
+            </div>
+        </section>
+
+        <section id="engagements">
+            <div class="container">
+                <div style="text-align: center;">
+                    <div class="section-title">Engagements (exemples)</div>
+                    <div class="section-sub">Contenu illustratif.</div>
+                </div>
+                <div class="grid-3">
+                    <div class="engagement-card"><i class="fas fa-stopwatch"></i><h3>Point 1</h3><p>Exemple.</p></div>
+                    <div class="engagement-card"><i class="fas fa-certificate"></i><h3>Point 2</h3><p>Exemple.</p></div>
+                    <div class="engagement-card"><i class="fas fa-hand-holding-usd"></i><h3>Point 3</h3><p>Exemple.</p></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact">
+            <div class="container">
+                <div style="text-align: center;">
+                    <div class="section-title">Formulaire de contact</div>
+                    <div class="section-sub">Exemple de formulaire (aucun envoi réel).</div>
+                </div>
+                <div style="display: flex; justify-content: center;">
+                    <form class="contact-form" id="demoForm">
+                        <input type="text" placeholder="Nom (exemple)" required>
+                        <input type="email" placeholder="Email (exemple)" required>
+                        <input type="tel" placeholder="Téléphone (exemple)">
+                        <select>
+                            <option>Option 1 (exemple)</option>
+                            <option>Option 2 (exemple)</option>
+                            <option>Option 3 (exemple)</option>
+                        </select>
+                        <textarea rows="3" placeholder="Message (exemple)"></textarea>
+                        <button type="submit" class="btn btn-primary">Envoyer (simulation)</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- PAGE MARQUE 1 -->
+    <div id="page-brand1" class="page">
+        <section style="min-height: 60vh;">
+            <div class="container">
+                <div class="hero" style="padding: 40px 0;">
+                    <h1>Page dédiée à <span style="color: var(--primary);">Marque 1</span></h1>
+                    <p>Exemple de contenu pour la marque 1. Aucune information réelle.</p>
+                    <button class="btn btn-primary nav-page" data-page="home">← Retour à l'accueil</button>
+                </div>
+                <div class="section-title">À propos de Marque 1 (exemple)</div>
+                <p>Exemple de texte.</p>
+                <p>Exemple de texte.</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- PAGE MARQUE 2 -->
+    <div id="page-brand2" class="page">
+        <section style="min-height: 60vh;">
+            <div class="container">
+                <div class="hero" style="padding: 40px 0;">
+                    <h1>Page dédiée à <span style="color: var(--primary);">Marque 2</span></h1>
+                    <p>Exemple de contenu pour la marque 2.</p>
+                    <button class="btn btn-primary nav-page" data-page="home">← Retour à l'accueil</button>
+                </div>
+                <div class="section-title">À propos de Marque 2 (exemple)</div>
+                <p>Exemple de texte.</p>
+                <p>Exemple de texte.</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- PAGE MARQUE 3 -->
+    <div id="page-brand3" class="page">
+        <section style="min-height: 60vh;">
+            <div class="container">
+                <div class="hero" style="padding: 40px 0;">
+                    <h1>Page dédiée à <span style="color: var(--primary);">Marque 3</span></h1>
+                    <p>Exemple de contenu pour la marque 3.</p>
+                    <button class="btn btn-primary nav-page" data-page="home">← Retour à l'accueil</button>
+                </div>
+                <div class="section-title">À propos de Marque 3 (exemple)</div>
+                <p>Exemple de texte.</p>
+                <p>Exemple de texte.</p>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-infos">
+                <div><i class="fas fa-phone-alt"></i> 00 00 00 00 00</div>
+                <div><i class="fas fa-map-marker-alt"></i> Adresse exemple</div>
+                <div><i class="fas fa-clock"></i> Horaires fictifs</div>
+            </div>
+            <hr>
+            <p>©Malik Ndiaye 2026 - Exemple de site vitrine . 3 thèmes. Menu Marques → pages virtuelles.</p>
+        </div>
+    </footer>
+
+    <script>
+        (function() {
+            // Gestion des thèmes
+            const body = document.body;
+            const themeBtns = document.querySelectorAll('.theme-btn');
+            function setTheme(themeName) {
+                body.classList.remove('theme-1', 'theme-2', 'theme-3');
+                body.classList.add(themeName);
+                localStorage.setItem('demoTheme', themeName);
+                themeBtns.forEach(btn => {
+                    if (btn.getAttribute('data-theme') === themeName) btn.classList.add('active');
+                    else btn.classList.remove('active');
+                });
+            }
+            themeBtns.forEach(btn => btn.addEventListener('click', () => {
+                const theme = btn.getAttribute('data-theme');
+                if (theme) setTheme(theme);
+            }));
+            const savedTheme = localStorage.getItem('demoTheme');
+            if (savedTheme && ['theme-1','theme-2','theme-3'].includes(savedTheme)) setTheme(savedTheme);
+            else setTheme('theme-1');
+
+            // Gestion des pages virtuelles
+            const pages = {
+                home: document.getElementById('page-home'),
+                brand1: document.getElementById('page-brand1'),
+                brand2: document.getElementById('page-brand2'),
+                brand3: document.getElementById('page-brand3')
+            };
+            function showPage(pageId) {
+                Object.values(pages).forEach(page => { if (page) page.classList.remove('active-page'); });
+                if (pages[pageId]) pages[pageId].classList.add('active-page');
+                history.pushState({ page: pageId }, '', `#${pageId}`);
+            }
+
+            // Navigation classique
+            document.querySelectorAll('.nav-page').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const page = link.getAttribute('data-page');
+                    if (page && pages[page]) {
+                        showPage(page);
+                        if (page === 'home') {
+                            const hash = link.getAttribute('href');
+                            if (hash && hash.startsWith('#')) {
+                                const targetId = hash.substring(1);
+                                const targetEl = document.getElementById(targetId);
+                                if (targetEl) setTimeout(() => targetEl.scrollIntoView({ behavior: 'smooth' }), 100);
+                            }
+                        }
+                    } else if (page === 'services' || page === 'prices' || page === 'engagements' || page === 'contact') {
+                        if (pages.home.classList.contains('active-page')) {
+                            const targetId = page === 'prices' ? 'prices' : page;
+                            const targetEl = document.getElementById(targetId);
+                            if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth' });
+                        } else {
+                            showPage('home');
+                            setTimeout(() => {
+                                const targetId = page === 'prices' ? 'prices' : page;
+                                const targetEl = document.getElementById(targetId);
+                                if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth' });
+                            }, 100);
+                        }
+                    }
+                });
+            });
+
+            // Clic sur les marques
+            document.querySelectorAll('.brand-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const brand = link.getAttribute('data-brand');
+                    if (brand === 'brand1') showPage('brand1');
+                    else if (brand === 'brand2') showPage('brand2');
+                    else if (brand === 'brand3') showPage('brand3');
+                });
+            });
+
+            document.getElementById('homeLink')?.addEventListener('click', () => showPage('home'));
+
+            const form = document.getElementById('demoForm');
+            if (form) {
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    alert("Formulaire de démonstration – aucun message n'est envoyé.");
+                    form.reset();
+                });
+            }
+
+            document.getElementById('demoBtn')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                alert("Bouton exemple – aucune action réelle.");
+            });
+
+            window.addEventListener('popstate', (event) => {
+                if (event.state && event.state.page) showPage(event.state.page);
+                else showPage('home');
+            });
+
+            const initialHash = window.location.hash.substring(1);
+            if (initialHash === 'brand1') showPage('brand1');
+            else if (initialHash === 'brand2') showPage('brand2');
+            else if (initialHash === 'brand3') showPage('brand3');
+            else showPage('home');
+        })();
+    </script>
+</body>
+</html>
